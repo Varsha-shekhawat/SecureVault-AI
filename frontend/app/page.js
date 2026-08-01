@@ -10,17 +10,22 @@ import UploadPanel from "@/components/upload/UploadPanel";
 export default function Home() {
   return (
     <div className="flex bg-[#FAF9F6] min-h-screen">
-      <Sidebar />
-      <main className="flex-1 p-10">
-        <Navbar />
-        <WelcomeSection />
-        <StatsCards />
-        <div className="grid grid-cols-2 gap-6">
-          <RecentDocuments />
-          <QuickActions />
-        </div>
-      </main>
-      <UploadPanel />
+  <Sidebar />
+
+  <main className="flex-1 p-10 overflow-y-auto">
+    <Navbar />
+
+    <WelcomeSection />
+
+    <StatsCards />
+
+    <div className="grid grid-cols-2 gap-6">
+      <RecentDocuments />
+      <QuickActions />
     </div>
+  </main>
+
+  <UploadPanel />
+</div>
   );
 }

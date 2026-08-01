@@ -1,4 +1,9 @@
-import { FileText, MessageSquare, FolderOpen, Sparkles } from "lucide-react";
+import {
+  FileText,
+  MessageSquare,
+  FolderOpen,
+  Sparkles,
+} from "lucide-react";
 
 const stats = [
   {
@@ -29,7 +34,7 @@ const stats = [
 
 export default function StatsCards() {
   return (
-    <div className="grid grid-cols-4 gap-6 mt-8 mb-8">
+    <div className="grid grid-cols-4 gap-6 mb-8">
       {stats.map((item, index) => {
         const Icon = item.icon;
 

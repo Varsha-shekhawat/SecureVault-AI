@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Home,
   FolderOpen,
@@ -14,7 +15,7 @@ import MenuItem from "../sidebar/MenuItem";
 
 export default function Sidebar() {
   return (
-    <aside className="w-72 h-screen bg-[#FCFBF8] border-r border-[#EAE7E1] flex flex-col justify-between p-6">
+    <aside className="w-72 h-screen sticky top-0 bg-white border-r border-[#EAE7E1] p-7 flex flex-col justify-between">
       <div>
 
         <Logo />
