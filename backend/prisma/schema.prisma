@@ -1,0 +1,160 @@
+// Prisma Schema for SecureVault AI (MySQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String              @id @default(uuid())
+  email            String              @unique
+  name             String?
+  passwordHash     String?
+  avatarUrl        String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  documents        Document[]
+  collections      Collection[]
+  chatSessions     ChatSession[]
+  summaries        Summary[]
+  flashcards       Flashcard[]
+  starredDocuments StarredDocument[]
+  activities       Activity[]
+
+  @@map("users")
+}
+
+model Document {
+  id                  String               @id @default(uuid())
+  userId              String
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title               String
+  fileName            String
+  fileType            String
+  fileSize            Int
+  fileUrl             String?
+  storageKey          String?
+  extractedText       String?              @db.LongText
+  status              String               @default("READY") // PENDING, PROCESSING, READY, FAILED
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  collectionDocuments CollectionDocument[]
+  summaries           Summary[]
+  flashcards          Flashcard[]
+  starredDocuments    StarredDocument[]
+
+  @@index([userId])
+  @@map("documents")
+}
+
+model Collection {
+  id                  String               @id @default(uuid())
+  userId              String
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  description         String?              @db.Text
+  icon                String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  collectionDocuments CollectionDocument[]
+
+  @@index([userId])
+  @@map("collections")
+}
+
+model CollectionDocument {
+  collectionId String
+  documentId   String
+  addedAt      DateTime   @default(now())
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, documentId])
+  @@index([documentId])
+  @@map("collection_documents")
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String        @default("New Chat")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId])
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id          String      @id @default(uuid())
+  sessionId   String
+  chatSession ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role        String      // user, assistant, system
+  content     String      @db.LongText
+  sources     Json?
+  createdAt   DateTime    @default(now())
+
+  @@index([sessionId])
+  @@map("chat_messages")
+}
+
+model Summary {
+  id          String   @id @default(uuid())
+  documentId  String
+  userId      String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  summaryText String   @db.LongText
+  keyPoints   Json?
+  createdAt   DateTime @default(now())
+
+  @@index([documentId])
+  @@index([userId])
+  @@map("summaries")
+}
+
+model Flashcard {
+  id         String   @id @default(uuid())
+  documentId String
+  userId     String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   String   @db.Text
+  answer     String   @db.Text
+  difficulty String   @default("medium")
+  createdAt  DateTime @default(now())
+
+  @@index([documentId])
+  @@index([userId])
+  @@map("flashcards")
+}
+
+model StarredDocument {
+  userId     String
+  documentId String
+  starredAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, documentId])
+  @@index([documentId])
+  @@map("starred_documents")
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("activity")
+}
