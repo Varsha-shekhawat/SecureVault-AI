@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import healthRoutes from "./routes/healthRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use("/api", healthRoutes);
+app.use("/api/auth", authRoutes);
 
 // 404 & Centralized Error Handler
 app.use(notFoundHandler);
